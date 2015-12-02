@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET =
+TARGET = painter
 DEPENDPATH += .
 INCLUDEPATH += .
 
