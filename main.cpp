@@ -14,8 +14,12 @@ int main(int argc, char **argv)
     char *buf = 0;
     auto checkCommand = [&](const char *needle, const std::function<void(const QString &)> &func) {
         const int len = strlen(needle);
-        if (!strncmp(buf, needle, len) && buf[len] == ' ') {
-            func(QString::fromLocal8Bit(buf + len + 1));
+        if (!strncmp(buf, needle, len) && (buf[len] == ' ' || !buf[len])) {
+            if (!buf[len]) {
+                func(QString());
+            } else {
+                func(QString::fromLocal8Bit(buf + len + 1));
+            }
             if (size.isValid() && image.isNull()) {
                 image = QImage(size, QImage::Format_ARGB32_Premultiplied);
                 image.fill(qRgba(0, 0, 0, 0));
@@ -44,6 +48,10 @@ int main(int argc, char **argv)
          || checkCommand("width", [&](const QString &width) { size.setWidth(width.toInt()); })
          || checkCommand("height", [&](const QString &height) { size.setHeight(height.toInt()); })
          || checkCommand("load", [&](const QString &filename) { image = QImage(filename); })
+         || checkCommand("clear", [&](const QString &) {
+                 if (!image.isNull())
+                     image = QImage(size, QImage::Format_ARGB32_Premultiplied);
+             })
          || checkCommand("fill", [&](const QString &rect) {
                  QStringList keys = rect.split(" ", QString::SkipEmptyParts);
                  if (keys.size() == 4 && !image.isNull()) {
