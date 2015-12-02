@@ -1,0 +1,9 @@
+file fisk.png
+width 100
+height 50
+color yellow
+fill 0 0 50 50
+color red
+fill 50 0 50 50
+color black
+line 0 0 100 50
