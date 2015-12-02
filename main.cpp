@@ -10,7 +10,8 @@ int main(int argc, char **argv)
     QString file;
     QColor color(Qt::black);
 
-    char buf[1024];
+    char buffer[1024];
+    char *buf = 0;
     auto checkCommand = [&](const char *needle, const std::function<void(const QString &)> &func) {
         const int len = strlen(needle);
         if (!strncmp(buf, needle, len) && buf[len] == ' ') {
@@ -27,10 +28,15 @@ int main(int argc, char **argv)
         }
         return false;
     };
-    while ((fgets(buf, sizeof(buf), stdin))) {
-        int len = strlen(buf);
+    while ((fgets(buffer, sizeof(buffer), stdin))) {
+        int len = strlen(buffer);
         if (len > 0)
             buf[--len] = '\0';
+        buf = buffer;
+        while (isspace(*buf))
+            ++buf;
+        if (*buf == '#')
+            continue;
         (checkCommand("file", [&](const QString &fileName) { file = fileName; })
          || checkCommand("color", [&](const QString &col) { color = col; })
          || checkCommand("width", [&](const QString &width) { size.setWidth(width.toInt()); })
