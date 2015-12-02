@@ -29,13 +29,15 @@ int main(int argc, char **argv)
         return false;
     };
     while ((fgets(buffer, sizeof(buffer), stdin))) {
-        int len = strlen(buffer);
-        if (len > 0)
-            buf[--len] = '\0';
+        {
+            int len = strlen(buffer);
+            if (len > 0)
+                buffer[--len] = '\0';
+        }
         buf = buffer;
         while (isspace(*buf))
             ++buf;
-        if (*buf == '#')
+        if (*buf == '#' || !*buf)
             continue;
         (checkCommand("file", [&](const QString &fileName) { file = fileName; })
          || checkCommand("color", [&](const QString &col) { color = col; })
